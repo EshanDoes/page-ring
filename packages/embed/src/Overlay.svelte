@@ -16,6 +16,7 @@
   import { RING_BASE } from "./lib/consts";
   import { onMount } from "svelte";
   import { getEmbed, getStatus, setStatus } from "./lib/api";
+  import Arrow from "./lib/Arrow.svelte";
 
   // https://stackoverflow.com/a/79718503/22946386
   const container = $host();
@@ -79,7 +80,7 @@
     >
       <div
         class={[
-          " overflow-clip transition-[width,height] duration-300 ease-in-out",
+          "overflow-clip transition-[width,height] duration-300 ease-in-out",
           !open ? "size-8" : showDirectory ? "h-96 w-72" : "h-10 w-72",
         ]}
       >
@@ -149,6 +150,16 @@
             </div>
           </div>
           <hr class="border-neutral-300" />
+          <div
+            class="pointer-events-none absolute top-8.75 right-3.5 h-1.5 overflow-clip"
+          >
+            <Arrow
+              class={[
+                "transition-transform",
+                !showDirectory && "translate-y-full",
+              ]}
+            />
+          </div>
           <div
             class={[
               "relative -z-10 min-h-0 flex-1 overflow-y-auto p-1.5 transition",
