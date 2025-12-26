@@ -85,7 +85,6 @@
   url: "https://minipa.ws/"
   buttonUrl: "https://minipa.ws/images/mini.png"
 
-
 - id: vqb
   name: "vqb"
   url: "https://vvqb.dev/"
@@ -93,5 +92,5 @@
 
 - id: sarvesh
   name: "sarvesh"
-  url: https://www.sarvesh.rocks/
-  buttonUrl: "https://www.sarvesh.rocks/assets/sarvesh-button.gif"
+  url: https://sarvesh.rocks/
+  buttonUrl: "https://sarvesh.rocks/assets/sarvesh-button.gif"
