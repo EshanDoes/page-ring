@@ -64,8 +64,9 @@ export async function setStatus({ enabled }: { enabled: boolean }) {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
-      "X-Set-Enabled": enabled ? "true" : "false",
     },
+    method: "POST",
+    body: JSON.stringify({ enabled }),
     credentials: "include",
   });
   if (!res.ok) {

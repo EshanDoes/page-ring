@@ -26,8 +26,7 @@ app.use(
   cors({
     origin: (origin) => origin,
     allowMethods: ["GET", "POST", "OPTIONS"],
-    allowHeaders: ["Content-Type", "X-Set-Enabled"],
-    exposeHeaders: ["ETag"],
+    allowHeaders: ["Content-Type"],
     credentials: true,
   }),
 );
@@ -95,39 +94,8 @@ app.get("/embed", async (c) => {
 });
 
 app.get("/embed/status", async (c) => {
-  let enabled: boolean;
-
-  const setHeader = c.req.header("X-Set-Enabled");
-  const setHeaderValues = ["true", "false"];
-
-  if (setHeader && setHeaderValues.includes(setHeader)) {
-    setCookie(c, "webring-enabled", setHeader, {
-      maxAge: 60 * 60 * 24 * 365, // 1 year
-      path: "/",
-      sameSite: "None",
-      secure: true,
-    });
-    enabled = setHeader === "true";
-  } else {
-    const webringCookie = getCookie(c, "webring-enabled");
-    const etag = c.req
-      .header("If-None-Match")
-      ?.replace(/^W\//, "")
-      .replace(/"/g, "")
-      .trim();
-    if (webringCookie) {
-      c.header("X-Enabled-Source", "cookie");
-      enabled = webringCookie === "true";
-    } else if (etag) {
-      c.header("X-Enabled-Source", "etag");
-      enabled = etag === "true";
-    } else {
-      enabled = false;
-    }
-  }
-
-  c.header("Cache-Control", "private");
-  c.header("ETag", enabled ? `"true"` : `"false"`);
+  const webringCookie = getCookie(c, "webring-enabled");
+  const enabled = webringCookie === "true";
   return c.json({ enabled });
 });
 

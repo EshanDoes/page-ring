@@ -4,7 +4,7 @@ export const ALWAYS_SHOW_ON = [
   "page-ring.vercel.app",
   "pagering.gideon.sh",
   "pagering.hackclub.com",
-  // !import.meta.env.PROD ? "localhost" : "",
+  !import.meta.env.PROD ? "localhost" : "",
 ];
 
 export const RING_BASE = import.meta.env.PROD
