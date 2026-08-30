@@ -238,3 +238,8 @@
   name: "pxlinspace"
   url: "https://pxlin.space/"
   buttonUrl: "https://pxlin.space/button.gif"
+
+- id: celsius
+  name: "celsius"
+  url: "https://sunray-hub.github.io/the-site-of-celsius"
+  buttonUrl: "https://sunray-hub.github.io/the-site-of-celsius/button.gif"
