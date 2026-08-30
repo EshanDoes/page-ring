@@ -4,6 +4,7 @@ import { z } from "astro/zod";
 import { Hono } from "hono";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 import { cors } from "hono/cors";
+import type { Member } from "~/lib/member";
 import {
   getAdjacentMembers,
   getAllMembers,
@@ -25,7 +26,8 @@ app.use(
   cors({
     origin: (origin) => origin,
     allowMethods: ["GET", "POST", "OPTIONS"],
-    allowHeaders: ["Content-Type"],
+    allowHeaders: ["Content-Type", "X-Set-Enabled"],
+    exposeHeaders: ["ETag"],
     credentials: true,
   }),
 );
@@ -71,7 +73,7 @@ app.get("/embed", async (c) => {
     members.find((member) => getHostname(member.url) === originHostname) ||
     null;
 
-  let prev, next;
+  let prev: Member, next: Member;
   if (current) {
     const adjacent = getAdjacentMembers(members, current.id);
     if (!adjacent.prev || !adjacent.next) {
@@ -93,8 +95,35 @@ app.get("/embed", async (c) => {
 });
 
 app.get("/embed/status", async (c) => {
-  const webringCookie = getCookie(c, "webring-enabled");
-  const enabled = webringCookie === "true";
+  let enabled: boolean;
+
+  const setHeader = c.req.header("X-Set-Enabled");
+  const setHeaderValues = ["true", "false"];
+
+  if (setHeader && setHeaderValues.includes(setHeader)) {
+    setCookie(c, "webring-enabled", setHeader, {
+      maxAge: 60 * 60 * 24 * 365, // 1 year
+      path: "/",
+      sameSite: "None",
+      secure: true,
+    });
+    enabled = setHeader === "true";
+  } else {
+    const webringCookie = getCookie(c, "webring-enabled");
+    const etag = c.req.header("If-None-Match")?.replace(/"/g, "").trim();
+    if (webringCookie) {
+      c.header("X-Enabled-Source", "cookie");
+      enabled = webringCookie === "true";
+    } else if (etag) {
+      c.header("X-Enabled-Source", "etag");
+      enabled = etag === "true";
+    } else {
+      enabled = false;
+    }
+  }
+
+  c.header("Cache-Control", "private");
+  c.header("ETag", enabled ? `"true"` : `"false"`);
   return c.json({ enabled });
 });
 
