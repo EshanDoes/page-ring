@@ -110,7 +110,11 @@ app.get("/embed/status", async (c) => {
     enabled = setHeader === "true";
   } else {
     const webringCookie = getCookie(c, "webring-enabled");
-    const etag = c.req.header("If-None-Match")?.replace(/"/g, "").trim();
+    const etag = c.req
+      .header("If-None-Match")
+      ?.replace(/^W\//, "")
+      .replace(/"/g, "")
+      .trim();
     if (webringCookie) {
       c.header("X-Enabled-Source", "cookie");
       enabled = webringCookie === "true";
